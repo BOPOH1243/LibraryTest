@@ -1,13 +1,24 @@
-from library import Library
+from library import Library, InvalidInputError
 
 
-def add_book_action(library: Library):
-    """Добавление книги в библиотеку."""
-    title = input("Введите название книги: ")
-    author = input("Введите автора книги: ")
-    year = int(input("Введите год издания книги: "))
-    library.add_book(title, author, year)
-    print("Книга успешно добавлена!")
+def add_book_action(library: Library) -> None:
+    """
+    Действие: добавить книгу в библиотеку.
+
+    Args:
+        library (Library): Объект библиотеки.
+    """
+    try:
+        title = input("Введите название книги: ")
+        author = input("Введите автора книги: ")
+        year = int(input("Введите год издания книги: "))
+        
+        library.add_book(title, author, year)
+        print("Книга успешно добавлена!")
+    except ValueError:
+        print("Ошибка: Год издания должен быть числом.")
+    except InvalidInputError as e:
+        print(f"Ошибка: {e}")
 
 
 def delete_book_action(library: Library):
@@ -47,14 +58,25 @@ def show_all_books_action(library: Library):
         print("Библиотека пуста.")
 
 
-def change_status_action(library: Library):
-    """Изменение статуса книги."""
-    book_id = int(input("Введите ID книги: "))
-    new_status = input("Введите новый статус (в наличии/выдана): ")
-    if library.change_status(book_id, new_status):
-        print("Статус книги успешно обновлен!")
-    else:
-        print("Книга с таким ID не найдена.")
+def change_status_action(library: Library) -> None:
+    """
+    Действие: изменить статус книги.
+
+    Args:
+        library (Library): Объект библиотеки.
+    """
+    try:
+        book_id = int(input("Введите ID книги: "))
+        status = input('Введите новый статус ("в наличии" или "выдана"): ').strip()
+        
+        if library.change_status(book_id, status):
+            print("Статус книги успешно изменен!")
+        else:
+            print("Ошибка: Книга с таким ID не найдена.")
+    except ValueError:
+        print("Ошибка: ID книги должен быть числом.")
+    except InvalidInputError as e:
+        print(f"Ошибка: {e}")
 
 
 def exit_action(_library: Library):

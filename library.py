@@ -2,6 +2,11 @@ import json
 from typing import List, Optional, Dict
 
 
+class InvalidInputError(Exception):
+    """Исключение для неверного ввода данных."""
+    pass
+
+
 class Book:
     """
     Класс, представляющий книгу.
@@ -24,7 +29,12 @@ class Book:
             author (str): Автор книги.
             year (int): Год издания книги.
             status (str, optional): Статус книги. По умолчанию "в наличии".
+
+        Raises:
+            InvalidInputError: Если статус некорректный.
         """
+        if status not in ["в наличии", "выдана"]:
+            raise InvalidInputError(f"Некорректный статус книги: {status}")
         self.id = book_id
         self.title = title
         self.author = author
@@ -106,7 +116,13 @@ class Library:
             title (str): Название книги.
             author (str): Автор книги.
             year (int): Год издания книги.
+
+        Raises:
+            InvalidInputError: Если год издания некорректный.
         """
+        if not isinstance(year, int) or year <= 0:
+            raise InvalidInputError("Год издания должен быть положительным числом.")
+        
         book_id = max((book.id for book in self.books), default=0) + 1
         new_book = Book(book_id, title, author, year)
         self.books.append(new_book)
@@ -156,9 +172,15 @@ class Library:
             book_id (int): Уникальный идентификатор книги.
             status (str): Новый статус книги ("в наличии" или "выдана").
 
+        Raises:
+            InvalidInputError: Если статус некорректный.
+
         Returns:
             bool: True, если статус успешно изменен, иначе False.
         """
+        if status not in ["в наличии", "выдана"]:
+            raise InvalidInputError(f"Некорректный статус: {status}")
+        
         for book in self.books:
             if book.id == book_id:
                 book.status = status
