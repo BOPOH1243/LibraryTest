@@ -1,70 +1,91 @@
 from library import Library
 
 
+def add_book_action(library: Library):
+    """Добавление книги в библиотеку."""
+    title = input("Введите название книги: ")
+    author = input("Введите автора книги: ")
+    year = int(input("Введите год издания книги: "))
+    library.add_book(title, author, year)
+    print("Книга успешно добавлена!")
+
+
+def delete_book_action(library: Library):
+    """Удаление книги из библиотеки."""
+    book_id = int(input("Введите ID книги для удаления: "))
+    if library.delete_book(book_id):
+        print("Книга успешно удалена!")
+    else:
+        print("Книга с таким ID не найдена.")
+
+
+def find_books_action(library: Library):
+    """Поиск книги в библиотеке."""
+    print("Поиск книги (оставьте поле пустым, если не нужно):")
+    title = input("Название: ") or None
+    author = input("Автор: ") or None
+    year = input("Год: ")
+    year = int(year) if year.isdigit() else None
+
+    results = library.find_books(title, author, year)
+    if results:
+        print("\nНайденные книги:")
+        for book in results:
+            print(f"{book.id}: {book.title} ({book.author}, {book.year}) - {book.status}")
+    else:
+        print("Книги не найдены.")
+
+
+def show_all_books_action(library: Library):
+    """Показ всех книг."""
+    books = library.get_all_books()
+    if books:
+        print("\nСписок всех книг:")
+        for book in books:
+            print(f"{book.id}: {book.title} ({book.author}, {book.year}) - {book.status}")
+    else:
+        print("Библиотека пуста.")
+
+
+def change_status_action(library: Library):
+    """Изменение статуса книги."""
+    book_id = int(input("Введите ID книги: "))
+    new_status = input("Введите новый статус (в наличии/выдана): ")
+    if library.change_status(book_id, new_status):
+        print("Статус книги успешно обновлен!")
+    else:
+        print("Книга с таким ID не найдена.")
+
+
+def exit_action(_library: Library):
+    """Выход из программы."""
+    print("Выход из программы.")
+    exit()
+
+
 def main():
     library = Library("library.json")
 
+    # Словарь сценариев
+    actions = {
+        "1": ("Добавить книгу", add_book_action),
+        "2": ("Удалить книгу", delete_book_action),
+        "3": ("Найти книгу", find_books_action),
+        "4": ("Показать все книги", show_all_books_action),
+        "5": ("Изменить статус книги", change_status_action),
+        "6": ("Выйти", exit_action),
+    }
+
     while True:
         print("\nМеню управления библиотекой:")
-        print("1. Добавить книгу")
-        print("2. Удалить книгу")
-        print("3. Найти книгу")
-        print("4. Показать все книги")
-        print("5. Изменить статус книги")
-        print("6. Выйти")
+        for key, (description, _) in actions.items():
+            print(f"{key}. {description}")
 
-        choice = input("Выберите действие (1-6): ")
+        choice = input("Выберите действие: ")
 
-        if choice == "1":
-            title = input("Введите название книги: ")
-            author = input("Введите автора книги: ")
-            year = int(input("Введите год издания книги: "))
-            library.add_book(title, author, year)
-            print("Книга успешно добавлена!")
-
-        elif choice == "2":
-            book_id = int(input("Введите ID книги для удаления: "))
-            if library.delete_book(book_id):
-                print("Книга успешно удалена!")
-            else:
-                print("Книга с таким ID не найдена.")
-
-        elif choice == "3":
-            print("Поиск книги (оставьте поле пустым, если не нужно):")
-            title = input("Название: ") or None
-            author = input("Автор: ") or None
-            year = input("Год: ")
-            year = int(year) if year.isdigit() else None
-
-            results = library.find_books(title, author, year)
-            if results:
-                print("\nНайденные книги:")
-                for book in results:
-                    print(f"{book.id}: {book.title} ({book.author}, {book.year}) - {book.status}")
-            else:
-                print("Книги не найдены.")
-
-        elif choice == "4":
-            books = library.get_all_books()
-            if books:
-                print("\nСписок всех книг:")
-                for book in books:
-                    print(f"{book.id}: {book.title} ({book.author}, {book.year}) - {book.status}")
-            else:
-                print("Библиотека пуста.")
-
-        elif choice == "5":
-            book_id = int(input("Введите ID книги: "))
-            new_status = input("Введите новый статус (в наличии/выдана): ")
-            if library.change_status(book_id, new_status):
-                print("Статус книги успешно обновлен!")
-            else:
-                print("Книга с таким ID не найдена.")
-
-        elif choice == "6":
-            print("Выход из программы.")
-            break
-
+        if choice in actions:
+            _, action_function = actions[choice]
+            action_function(library)
         else:
             print("Некорректный выбор. Попробуйте снова.")
 

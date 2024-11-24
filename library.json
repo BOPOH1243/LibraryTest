@@ -5,5 +5,19 @@
         "author": "ddd",
         "year": 1998,
         "status": "выдана"
+    },
+    {
+        "id": 2,
+        "title": "asd",
+        "author": "ddd",
+        "year": 2,
+        "status": "sadfsdfsdf"
+    },
+    {
+        "id": 3,
+        "title": "еее",
+        "author": "укеуек",
+        "year": 1999,
+        "status": "в наличии"
     }
 ]
